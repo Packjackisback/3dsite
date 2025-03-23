@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>National Debt Visualization</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const jsonFilePath = 'https://raw.githubusercontent.com/Packjackisback/3dsite/master/debt.json';
+
+            fetch(jsonFilePath)
+                .then(response => response.json())
+                .then(data => {
+                    const records = data.data;
+
+                    const scene = document.querySelector('a-scene');
+
+                    records.forEach((record, index) => {
+                        const date = record.record_date;
+                        const totalDebt = parseFloat(record.tot_pub_debt_out_amt);
+
+                        const height = totalDebt / 1000000000000; //1 trillion 
+
+                        const box = document.createElement('a-box');
+                        box.setAttribute('position', `${index * 2 - 4} ${height / 2} 0`);
+                        box.setAttribute('height', '1');
+                        box.setAttribute('depth', height);
+                        box.setAttribute('width', '1');
+                        box.setAttribute('color', '#4CC3D9');
+                        scene.appendChild(box);
+
+                        const label = document.createElement('a-text');
+                        label.setAttribute('value', date);
+                        label.setAttribute('align', 'center');
+                        label.setAttribute('position', `${index * 2 - 4} -0.5 0`);
+                        label.setAttribute('rotation', '-90 0 0');
+                        scene.appendChild(label);
+                    });
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        });
+    </script>
+</head>
+<body>
+<a-scene>
+    <a-entity camera look-controls wasd-controls position="0 1.6 4"></a-entity>
+    <!-- Ground -->
+    <a-plane position="0 0 0" rotation="-90 0 0" width="20" height="20" color="#7BC8A4"></a-plane>
+</a-scene>
+</body>
+</html>
